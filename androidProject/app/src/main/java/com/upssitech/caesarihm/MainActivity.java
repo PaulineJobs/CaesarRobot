@@ -1,72 +1,75 @@
 package com.upssitech.caesarihm;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements  View.OnTouchListener {
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity {
+
+    private String errorMsg = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button buttonUp = (Button) findViewById(R.id.buttonUp);
-        Button buttonDown = (Button) findViewById(R.id.buttonDown);
-        Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
-        Button buttonRight= (Button) findViewById(R.id.buttonRight);
-        buttonUp.setOnTouchListener(this);
-        buttonDown.setOnTouchListener(this);
-        buttonLeft.setOnTouchListener(this);
-        buttonRight.setOnTouchListener(this);
 
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (v.getId()) {
-            case R.id.buttonUp:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Pressed
-                    Toast.makeText(MainActivity.this,"Up Pushed", Toast.LENGTH_SHORT).show();
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Released
-                    Toast.makeText(MainActivity.this,"Up Released", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.buttonDown:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Pressed
-                    Toast.makeText(MainActivity.this,"Down Pushed", Toast.LENGTH_SHORT).show();
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Released
-                    Toast.makeText(MainActivity.this,"Down Released", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.buttonRight:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Pressed
-                    Toast.makeText(MainActivity.this,"Right Pushed", Toast.LENGTH_SHORT).show();
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Released
-                    Toast.makeText(MainActivity.this,"Right Released", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.buttonLeft:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Pressed
-                    Toast.makeText(MainActivity.this,"Left Pushed", Toast.LENGTH_SHORT).show();
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Released
-                    Toast.makeText(MainActivity.this,"Left Released", Toast.LENGTH_SHORT).show();
-                }
-                return true;
+        // Error message display
+        errorMsg = getIntent().getStringExtra("errorReturned");
+        if (errorMsg != null){
+            Toast.makeText(this,errorMsg, Toast.LENGTH_SHORT).show();
         }
-        return false;
+
+        // Bluetooth Setup
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Get List of Paired Bluetooth Device
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        List<Object> deviceList = new ArrayList<>();
+        if (pairedDevices.size() > 0) {
+            // There are paired devices. Get the name and address of each paired device.
+            for (BluetoothDevice device : pairedDevices) {
+                String deviceName = device.getName();
+                String deviceHardwareAddress = device.getAddress(); // MAC address
+                DeviceInfoModel deviceInfoModel = new DeviceInfoModel(deviceName,deviceHardwareAddress);
+                deviceList.add(deviceInfoModel);
+            }
+            // Display paired device using recyclerView
+            RecyclerView recyclerView = findViewById(R.id.recyclerViewDevice);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            DeviceListAdapter deviceListAdapter = new DeviceListAdapter(this,deviceList);
+            recyclerView.setAdapter(deviceListAdapter);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+        } else {
+            View view = findViewById(R.id.recyclerViewDevice);
+            Snackbar snackbar = Snackbar.make(view, "Veuillez activer le Bluetooth", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("C'est fait !", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Context context = getApplicationContext();
+                    PackageManager packageManager = context.getPackageManager();
+                    Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+                    ComponentName componentName = intent.getComponent();
+                    Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+                    context.startActivity(mainIntent);
+                    Runtime.getRuntime().exit(0);
+                }
+            });
+            snackbar.show();
+        }
     }
 }

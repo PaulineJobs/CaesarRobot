@@ -6,91 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/buttonUp"
-        android:layout_width="67dp"
-        android:layout_height="76dp"
-        android:text="▲"
-        app:layout_constraintBottom_toTopOf="@+id/buttonLeft"
-        app:layout_constraintStart_toEndOf="@+id/buttonLeft" />
-
-    <Button
-        android:id="@+id/buttonDown"
-        android:layout_width="66dp"
-        android:layout_height="75dp"
-        android:text="▼"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonLeft" />
-
-    <Button
-        android:id="@+id/buttonRight"
-        android:layout_width="66dp"
-        android:layout_height="77dp"
-        android:text="►"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
-        app:layout_constraintStart_toEndOf="@+id/buttonDown"
-        app:layout_constraintTop_toBottomOf="@+id/buttonUp" />
-
-    <Button
-        android:id="@+id/buttonLeft"
-        android:layout_width="66dp"
-        android:layout_height="75dp"
-        android:text="◄"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
-        app:layout_constraintEnd_toStartOf="@+id/buttonDown"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textAuto"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDevice"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="26dp"
-        android:text="Auto"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/textMan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="26dp"
-        android:text="Manuel"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/switchManAuto" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="4dp"
-        android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toTopOf="@+id/buttonUp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Switch
-        android:id="@+id/switchManAuto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="22dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textAuto" />
-
-    <ImageView
-        android:id="@+id/imageStop"
-        android:layout_width="111dp"
-        android:layout_height="109dp"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="34dp"
-        app:layout_constraintBottom_toTopOf="@+id/switchManAuto"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:srcCompat="@drawable/stop_icon"
-        android:contentDescription="Stop icon" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
