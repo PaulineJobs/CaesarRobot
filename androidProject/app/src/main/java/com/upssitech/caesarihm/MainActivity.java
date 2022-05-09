@@ -14,14 +14,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button boutonUp = (Button) findViewById(R.id.buttonUp);
-        Button boutonDown = (Button) findViewById(R.id.buttonDown);
-        Button boutonLeft = (Button) findViewById(R.id.buttonLeft);
-        Button boutonRight= (Button) findViewById(R.id.buttonRight);
-        boutonUp.setOnClickListener(this);
-        boutonDown.setOnClickListener(this);
-        boutonLeft.setOnClickListener(this);
-        boutonRight.setOnClickListener(this);
+        Button buttonUp = (Button) findViewById(R.id.buttonUp);
+        Button buttonDown = (Button) findViewById(R.id.buttonDown);
+        Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
+        Button buttonRight= (Button) findViewById(R.id.buttonRight);
+        buttonUp.setOnClickListener(this);
+        buttonDown.setOnClickListener(this);
+        buttonLeft.setOnClickListener(this);
+        buttonRight.setOnClickListener(this);
 
     }
 
@@ -45,56 +45,4 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
 
     }
-    /*public class MainActivity extends AppCompatActivity {
-    //attributs
-    boolean clicUp = false;
-    boolean clicDown = false;
-    boolean clicLeft = false;
-    boolean clicRight = false;
-
-    //methode
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Button boutonUp = (Button) findViewById(R.id.buttonUp);
-        boutonUp.set
-
-                (v -> {
-            clicUp = true;
-        });
-        boutonUp.setOnClickListener(v -> {
-            clicUp = false;
-        });
-
-
-
-
-        Button boutonDown = (Button) findViewById(R.id.buttonDown);
-        boutonDown.setOnClickListener(v -> {
-            clicDown = true;
-        });
-        boutonUp.setOnClickListener(v -> {
-            clicDown = false;
-        });
-        Button boutonLeft = (Button) findViewById(R.id.buttonLeft);
-        boutonLeft.setOnClickListener(v -> {
-            clicLeft = true;
-        });
-        boutonUp.setOnClickListener(v -> {
-            clicLeft = false;
-        });
-        Button boutonRight= (Button) findViewById(R.id.buttonRight);
-        boutonRight.setOnClickListener(v -> {
-            clicRight = true;
-        });
-        boutonRight.setOnClickListener(v -> {
-            clicRight = false;
-        });
-
-
-    }
-
-}*/
 }
