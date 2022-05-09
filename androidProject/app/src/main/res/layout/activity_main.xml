@@ -81,7 +81,7 @@
         app:layout_constraintEnd_toStartOf="@+id/textAuto" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageStop"
         android:layout_width="111dp"
         android:layout_height="109dp"
         android:layout_marginTop="34dp"
@@ -90,6 +90,7 @@
         app:layout_constraintBottom_toTopOf="@+id/switchManAuto"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:srcCompat="@drawable/stop_icon" />
+        app:srcCompat="@drawable/stop_icon"
+        android:contentDescription="Stop icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
