@@ -138,37 +138,53 @@ public class ControlRobotActivity extends Activity implements  View.OnTouchListe
             case R.id.buttonUp:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
+                    // u = 117 in ASCII
                     Toast.makeText(ControlRobotActivity.this,"Up Pushed", Toast.LENGTH_SHORT).show();
+                    connectedThread.write("u");//Send "u" to arduino throught Bluetooth for making the car go on
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
                     Toast.makeText(ControlRobotActivity.this,"Up Released", Toast.LENGTH_SHORT).show();
+                    // s = 115 in ASCII
+                    connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
                 return true;
             case R.id.buttonDown:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
                     Toast.makeText(ControlRobotActivity.this,"Down Pushed", Toast.LENGTH_SHORT).show();
+                    // d = 100 in ASCII
+                    connectedThread.write("d");//Send "d" to arduino throught Bluetooth for making the car go backwards
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
                     Toast.makeText(ControlRobotActivity.this,"Down Released", Toast.LENGTH_SHORT).show();
+                    // s = 115 in ASCII
+                    connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
                 return true;
             case R.id.buttonRight:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
                     Toast.makeText(ControlRobotActivity.this,"Right Pushed", Toast.LENGTH_SHORT).show();
+                    // r = 114 in ASCII
+                    connectedThread.write("r");//Send "r" to arduino throught Bluetooth for making the car turn right
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
                     Toast.makeText(ControlRobotActivity.this,"Right Released", Toast.LENGTH_SHORT).show();
+                    // s = 115 in ASCII
+                    connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
                 return true;
             case R.id.buttonLeft:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
                     Toast.makeText(ControlRobotActivity.this,"Left Pushed", Toast.LENGTH_SHORT).show();
+                    // l = 108 in ASCII
+                    connectedThread.write("l");//Send "l" to arduino throught Bluetooth for making the car turn left
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
                     Toast.makeText(ControlRobotActivity.this,"Left Released", Toast.LENGTH_SHORT).show();
+                    // s = 115 in ASCII
+                    connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
                 return true;
         }
@@ -314,9 +330,11 @@ public class ControlRobotActivity extends Activity implements  View.OnTouchListe
         if (createConnectThread != null){
             createConnectThread.cancel();
         }
-        Intent a = new Intent(Intent.ACTION_MAIN);
-        a.addCategory(Intent.CATEGORY_HOME);
-        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(a);
+        Intent intent = new Intent(context,MainActivity.class);
+        context.startActivity(intent);
+//        Intent a = new Intent(Intent.ACTION_MAIN);
+//        a.addCategory(Intent.CATEGORY_HOME);
+//        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(a);
     }
 }
