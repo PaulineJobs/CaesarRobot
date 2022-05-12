@@ -21,6 +21,7 @@ package com.upssitech.caesarihm;
         import android.widget.TextView;
         import android.widget.Toast;
 
+        import androidx.appcompat.app.AppCompatActivity;
         import androidx.appcompat.widget.Toolbar;
 
         import java.io.IOException;
@@ -28,7 +29,7 @@ package com.upssitech.caesarihm;
         import java.io.OutputStream;
         import java.util.UUID;
 
-public class ControlRobotActivity extends Activity implements  View.OnTouchListener {
+public class ControlRobotActivity extends AppCompatActivity implements  View.OnTouchListener, View.OnClickListener {
 
     private String deviceName = null;
     private String deviceAddress;
@@ -46,6 +47,9 @@ public class ControlRobotActivity extends Activity implements  View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_robot);
 
+        ImageView stopIm = (ImageView) findViewById(R.id.imageStop);
+        stopIm.setVisibility(View.INVISIBLE);
+
         //Setup command buttons
         Button buttonUp = (Button) findViewById(R.id.buttonUp);
         Button buttonDown = (Button) findViewById(R.id.buttonDown);
@@ -53,8 +57,8 @@ public class ControlRobotActivity extends Activity implements  View.OnTouchListe
         Button buttonRight= (Button) findViewById(R.id.buttonRight);
         buttonUp.setOnTouchListener(this);
         buttonDown.setOnTouchListener(this);
-        buttonLeft.setOnTouchListener(this);
-        buttonRight.setOnTouchListener(this);
+        buttonLeft.setOnClickListener(this);
+        buttonRight.setOnClickListener(this);
 
         // UI Initialization
         //final Button buttonConnect = findViewById(R.id.buttonConnect);
@@ -134,34 +138,40 @@ public class ControlRobotActivity extends Activity implements  View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        ImageView stopIm = (ImageView) findViewById(R.id.imageStop);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        if(progressBar.getVisibility() != View.GONE)
+            return false;
         switch (v.getId()) {
             case R.id.buttonUp:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
                     // u = 117 in ASCII
-                    Toast.makeText(ControlRobotActivity.this,"Up Pushed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ControlRobotActivity.this,"Up Pushed", Toast.LENGTH_SHORT).show();
                     connectedThread.write("u");//Send "u" to arduino throught Bluetooth for making the car go on
+                    stopIm.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
-                    Toast.makeText(ControlRobotActivity.this,"Up Released", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ControlRobotActivity.this,"Up Released", Toast.LENGTH_SHORT).show();
                     // s = 115 in ASCII
                     connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
+                    stopIm.setVisibility(View.INVISIBLE);
                 }
                 return true;
             case R.id.buttonDown:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
-                    Toast.makeText(ControlRobotActivity.this,"Down Pushed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ControlRobotActivity.this,"Down Pushed", Toast.LENGTH_SHORT).show();
                     // d = 100 in ASCII
                     connectedThread.write("d");//Send "d" to arduino throught Bluetooth for making the car go backwards
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
-                    Toast.makeText(ControlRobotActivity.this,"Down Released", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ControlRobotActivity.this,"Down Released", Toast.LENGTH_SHORT).show();
                     // s = 115 in ASCII
                     connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
                 return true;
-            case R.id.buttonRight:
+            /*case R.id.buttonRight:
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressed
                     Toast.makeText(ControlRobotActivity.this,"Right Pushed", Toast.LENGTH_SHORT).show();
@@ -186,9 +196,29 @@ public class ControlRobotActivity extends Activity implements  View.OnTouchListe
                     // s = 115 in ASCII
                     connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
-                return true;
+                return true;*/
         }
         return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        if(progressBar.getVisibility() != View.GONE){}
+        else{
+            switch (v.getId()) {
+                case R.id.buttonRight:
+                    // r = 114 in ASCII
+                    Toast.makeText(ControlRobotActivity.this,"Right Clicked", Toast.LENGTH_SHORT).show();
+                    connectedThread.write("r");//Send "r" to arduino throught Bluetooth for making the car turn right
+                    break;
+                case R.id.buttonLeft:
+                    // l = 108 in ASCII
+                    Toast.makeText(ControlRobotActivity.this,"Left Clicked", Toast.LENGTH_SHORT).show();
+                    connectedThread.write("l");//Send "l" to arduino throught Bluetooth for making the car turn left
+                    break;
+            }
+        }
     }
 
     /* ============================ Thread to Create Bluetooth Connection =================================== */

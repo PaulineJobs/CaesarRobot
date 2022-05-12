@@ -8,48 +8,50 @@
 
     <Button
         android:id="@+id/buttonUp"
-        android:layout_width="60dp"
-        android:layout_height="70dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:text="▲"
-        app:layout_constraintBottom_toTopOf="@+id/buttonLeft"
-        app:layout_constraintStart_toEndOf="@+id/buttonLeft" />
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonDown"
-        android:layout_width="60dp"
-        android:layout_height="70dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:layout_marginBottom="4dp"
         android:text="▼"
+        android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonLeft" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonRight"
-        android:layout_width="60dp"
+        android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginEnd="16dp"
-        android:text="►"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
-        app:layout_constraintEnd_toStartOf="@+id/divider"
-        app:layout_constraintStart_toEndOf="@+id/buttonDown"
-        app:layout_constraintTop_toBottomOf="@+id/buttonUp" />
+        android:layout_marginStart="8dp"
+        android:text="↱"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLeft"
+        app:layout_constraintStart_toEndOf="@+id/buttonUp" />
 
     <Button
         android:id="@+id/buttonLeft"
-        android:layout_width="60dp"
+        android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_marginStart="15dp"
-        android:text="◄"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
-        app:layout_constraintEnd_toStartOf="@+id/buttonDown"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="44dp"
+        android:text="↰"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonDown" />
 
     <Switch
         android:id="@+id/switchManAuto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toEndOf="@+id/textMan"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck,TouchTargetSizeCheck" />
@@ -59,10 +61,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="36dp"
         android:text="Auto"
         app:layout_constraintEnd_toStartOf="@+id/divider"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/switchManAuto"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,8 +73,8 @@
         android:id="@+id/textMan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
         android:text="Manuel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
