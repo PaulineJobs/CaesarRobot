@@ -2,7 +2,6 @@ package com.upssitech.caesarihm;
 
         import static android.content.ContentValues.TAG;
 
-        import android.app.Activity;
         import android.bluetooth.BluetoothAdapter;
         import android.bluetooth.BluetoothDevice;
         import android.bluetooth.BluetoothSocket;
@@ -15,14 +14,16 @@ package com.upssitech.caesarihm;
         import android.util.Log;
         import android.view.MotionEvent;
         import android.view.View;
+        import android.webkit.WebView;
         import android.widget.Button;
+        import android.widget.CompoundButton;
         import android.widget.ImageView;
         import android.widget.ProgressBar;
-        import android.widget.TextView;
         import android.widget.Toast;
 
         import androidx.appcompat.app.AppCompatActivity;
-        import androidx.appcompat.widget.Toolbar;
+
+        import com.google.android.material.switchmaterial.SwitchMaterial;
 
         import java.io.IOException;
         import java.io.InputStream;
@@ -38,6 +39,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
     public static ConnectedThread connectedThread;
     public static CreateConnectThread createConnectThread;
     private Context context;
+    private boolean switchIsChecked = false;
 
     private final static int CONNECTING_STATUS = 1; // used in bluetooth handler to identify message status
     private final static int MESSAGE_READ = 2; // used in bluetooth handler to identify message update
@@ -50,26 +52,27 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
         ImageView stopIm = (ImageView) findViewById(R.id.imageStop);
         stopIm.setVisibility(View.INVISIBLE);
 
+        WebView myWebView = (WebView) findViewById(R.id.webview);
+        myWebView.getSettings().setLoadWithOverviewMode(true);
+        myWebView.getSettings().setUseWideViewPort(true);
+        myWebView.loadUrl("http://willy.ddns.info/caesarPFR/launcher.png");
+
         //Setup command buttons
         Button buttonUp = (Button) findViewById(R.id.buttonUp);
         Button buttonDown = (Button) findViewById(R.id.buttonDown);
         Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
         Button buttonRight= (Button) findViewById(R.id.buttonRight);
+        SwitchMaterial switchManAuto = (SwitchMaterial) findViewById(R.id.switchManAuto);
         buttonUp.setOnTouchListener(this);
         buttonDown.setOnTouchListener(this);
         buttonLeft.setOnClickListener(this);
         buttonRight.setOnClickListener(this);
+        switchManAuto.setOnClickListener(this);
 
         // UI Initialization
-        //final Button buttonConnect = findViewById(R.id.buttonConnect);
-        //final Toolbar toolbar = findViewById(R.id.toolbar);
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
-        //final TextView textViewInfo = findViewById(R.id.textViewInfo);
-        //final Button buttonToggle = findViewById(R.id.buttonToggle);
-        //buttonToggle.setEnabled(false);
-        //final ImageView imageView = findViewById(R.id.imageView);
-        //imageView.setBackgroundColor(getResources().getColor(R.color.colorOff));
+        switchManAuto.setEnabled(false);
 
         // If a bluetooth device has been selected from SelectDeviceActivity
         deviceName = getIntent().getStringExtra("deviceName");
@@ -77,9 +80,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
             // Get the device address to make BT Connection
             deviceAddress = getIntent().getStringExtra("deviceAddress");
             // Show progree and connection status
-            //toolbar.setSubtitle("Connecting to " + deviceName + "...");
             progressBar.setVisibility(View.VISIBLE);
-            //buttonConnect.setEnabled(false);
 
             /*
             This is the most important piece of code. When "deviceName" is found
@@ -89,6 +90,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             createConnectThread = new CreateConnectThread(bluetoothAdapter,deviceAddress);
             createConnectThread.start();
+
         }
 
         /*
@@ -97,17 +99,16 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg){
+                SwitchMaterial switchManAuto = (SwitchMaterial) findViewById(R.id.switchManAuto);
                 switch (msg.what){
                     case CONNECTING_STATUS:
                         switch(msg.arg1){
                             case 1:
-                                //toolbar.setSubtitle("Connected to " + deviceName);
                                 progressBar.setVisibility(View.GONE);
-                                //buttonConnect.setEnabled(true);
-                                //buttonToggle.setEnabled(true);
+                                switchManAuto.setEnabled(true);
+                                reload();
                                 break;
                             case -1:
-                                //toolbar.setSubtitle("Device fails to connect");
                                 progressBar.setVisibility(View.GONE);
                                 //buttonConnect.setEnabled(true);
                                 Intent intent = new Intent(context,MainActivity.class);
@@ -119,7 +120,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
 
                     case MESSAGE_READ:
                         String arduinoMsg = msg.obj.toString(); // Read message from Arduino
-                        switch (arduinoMsg.toLowerCase()){
+                        switch (arduinoMsg.toLowerCase()) {
                             case "led is turned on":
                                 //imageView.setBackgroundColor(getResources().getColor(R.color.colorOn));
                                 //textViewInfo.setText("Arduino Message : " + arduinoMsg);
@@ -129,8 +130,21 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
                                 //textViewInfo.setText("Arduino Message : " + arduinoMsg);
                                 break;
                         }
-                        break;
                 }
+
+            }
+            public void reload() {
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 5s = 5000ms
+                        WebView map = (WebView) findViewById(R.id.webview);
+                        map.loadUrl("http://willy.ddns.info/caesarPFR/map.jpg");
+                        //Toast.makeText(ControlRobotActivity.this,"Map Reloaded", Toast.LENGTH_SHORT).show();
+                        reload();
+                    }
+                }, 2000);
             }
         };
 
@@ -149,13 +163,11 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
                     // u = 117 in ASCII
                     //Toast.makeText(ControlRobotActivity.this,"Up Pushed", Toast.LENGTH_SHORT).show();
                     connectedThread.write("u");//Send "u" to arduino throught Bluetooth for making the car go on
-                    stopIm.setVisibility(View.VISIBLE);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Released
                     //Toast.makeText(ControlRobotActivity.this,"Up Released", Toast.LENGTH_SHORT).show();
                     // s = 115 in ASCII
                     connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
-                    stopIm.setVisibility(View.INVISIBLE);
                 }
                 return true;
             case R.id.buttonDown:
@@ -171,32 +183,6 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
                     connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
                 }
                 return true;
-            /*case R.id.buttonRight:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Pressed
-                    Toast.makeText(ControlRobotActivity.this,"Right Pushed", Toast.LENGTH_SHORT).show();
-                    // r = 114 in ASCII
-                    connectedThread.write("r");//Send "r" to arduino throught Bluetooth for making the car turn right
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Released
-                    Toast.makeText(ControlRobotActivity.this,"Right Released", Toast.LENGTH_SHORT).show();
-                    // s = 115 in ASCII
-                    connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
-                }
-                return true;
-            case R.id.buttonLeft:
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Pressed
-                    Toast.makeText(ControlRobotActivity.this,"Left Pushed", Toast.LENGTH_SHORT).show();
-                    // l = 108 in ASCII
-                    connectedThread.write("l");//Send "l" to arduino throught Bluetooth for making the car turn left
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Released
-                    Toast.makeText(ControlRobotActivity.this,"Left Released", Toast.LENGTH_SHORT).show();
-                    // s = 115 in ASCII
-                    connectedThread.write("s");//Send "s" to arduino throught Bluetooth for making the car stop
-                }
-                return true;*/
         }
         return false;
     }
@@ -204,22 +190,42 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
     @Override
     public void onClick(View v) {
         ProgressBar progressBar = findViewById(R.id.progressBar);
+        Button buttonUp = (Button) findViewById(R.id.buttonUp);
+        Button buttonDown = (Button) findViewById(R.id.buttonDown);
+        Button buttonLeft = (Button) findViewById(R.id.buttonLeft);
+        Button buttonRight= (Button) findViewById(R.id.buttonRight);
+        SwitchMaterial switchManAuto = (SwitchMaterial) findViewById(R.id.switchManAuto);
         if(progressBar.getVisibility() != View.GONE){}
         else{
             switch (v.getId()) {
                 case R.id.buttonRight:
                     // r = 114 in ASCII
-                    Toast.makeText(ControlRobotActivity.this,"Right Clicked", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ControlRobotActivity.this,"Right Clicked", Toast.LENGTH_SHORT).show();
                     connectedThread.write("r");//Send "r" to arduino throught Bluetooth for making the car turn right
                     break;
                 case R.id.buttonLeft:
                     // l = 108 in ASCII
-                    Toast.makeText(ControlRobotActivity.this,"Left Clicked", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ControlRobotActivity.this,"Left Clicked", Toast.LENGTH_SHORT).show();
                     connectedThread.write("l");//Send "l" to arduino throught Bluetooth for making the car turn left
                     break;
+                case R.id.switchManAuto:
+                    connectedThread.write("m");//Send "m" to arduino throught Bluetooth for change mode (man or auto)
+                    if(switchManAuto.isChecked()){
+                        buttonUp.setEnabled(false);
+                        buttonDown.setEnabled(false);
+                        buttonLeft.setEnabled(false);
+                        buttonRight.setEnabled(false);
+                    }
+                    else{
+                        buttonUp.setEnabled(true);
+                        buttonDown.setEnabled(true);
+                        buttonLeft.setEnabled(true);
+                        buttonRight.setEnabled(true);
+                    }
             }
         }
     }
+
 
     /* ============================ Thread to Create Bluetooth Connection =================================== */
     public static class CreateConnectThread extends Thread {
@@ -323,7 +329,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
                     if (buffer[bytes] == '\n'){
                         readMessage = new String(buffer,0,bytes);
                         Log.e("Arduino Message",readMessage);
-                        handler.obtainMessage(MESSAGE_READ,readMessage).sendToTarget();
+                        handler.obtainMessage(MESSAGE_READ,buffer).sendToTarget();
                         bytes = 0;
                     } else {
                         bytes++;
@@ -357,11 +363,11 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
     @Override
     public void onBackPressed() {
         // Terminate Bluetooth Connection and close app
-        if (createConnectThread != null){
+       /* if (createConnectThread != null){
             createConnectThread.cancel();
         }
         Intent intent = new Intent(context,MainActivity.class);
-        context.startActivity(intent);
+        context.startActivity(intent);*/
 //        Intent a = new Intent(Intent.ACTION_MAIN);
 //        a.addCategory(Intent.CATEGORY_HOME);
 //        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
