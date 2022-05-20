@@ -55,7 +55,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
         WebView myWebView = (WebView) findViewById(R.id.webview);
         myWebView.getSettings().setLoadWithOverviewMode(true);
         myWebView.getSettings().setUseWideViewPort(true);
-        myWebView.loadUrl("http://willy.ddns.info/caesarPFR/launcher.png");
+        myWebView.loadUrl("http://willy.ddns.info/caesarPFR/map.jpg");
 
         //Setup command buttons
         Button buttonUp = (Button) findViewById(R.id.buttonUp);
@@ -140,7 +140,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
                     public void run() {
                         // Do something after 5s = 5000ms
                         WebView map = (WebView) findViewById(R.id.webview);
-                        map.loadUrl("http://willy.ddns.info/caesarPFR/map.jpg");
+                        map.reload();
                         //Toast.makeText(ControlRobotActivity.this,"Map Reloaded", Toast.LENGTH_SHORT).show();
                         reload();
                     }
@@ -209,6 +209,7 @@ public class ControlRobotActivity extends AppCompatActivity implements  View.OnT
                     connectedThread.write("l");//Send "l" to arduino throught Bluetooth for making the car turn left
                     break;
                 case R.id.switchManAuto:
+                    Toast.makeText(ControlRobotActivity.this,"Switch Clicked", Toast.LENGTH_SHORT).show();
                     connectedThread.write("m");//Send "m" to arduino throught Bluetooth for change mode (man or auto)
                     if(switchManAuto.isChecked()){
                         buttonUp.setEnabled(false);
