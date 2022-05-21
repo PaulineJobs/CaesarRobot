@@ -2,88 +2,96 @@
 #include "Ultrasonic.h"
 
 //constantes
-#define pinAvance 8
-#define pinMaDirection 9
+#define pinAvance 8  // définition d'une constante pour la commande de l'avance du robot
+#define pinMaDirection 9  // définition d'une constante pour la commande de direction du robot
 
 //objets
-Servo avance;
-Servo maDirection;
+Servo avance;  // création de l'objet Servo pour controller l'avance du robot
+Servo maDirection;  // création de l'objet Servo pour controller la direction du robot
 
-Ultrasonic ultrasonAvant(5,27); //Trig, Echo    1 SCOTCH 
+// création des objets Ultrasonic pour utiliser les capteurs à ultrason
+Ultrasonic ultrasonAvant(5,27); //Trig, Echo    1 SCOTCH  repères câblage
 Ultrasonic ultrasonDroite(6,26);//              2 SCOTCH
 Ultrasonic ultrasonGauche(4,25);//              0 SCOTCH
 
 //variables
-int control = 115;//0 en ascii
-int prevControl = 115; 
+//par defaut la variable control prend la valeur correspondant à l'arret
+int control = 115;  //115 en decimal correspond à '0' en ascii
 
-int finRota = 0;
+int finRota = 0;  // variable indiquant la fin d'une étape de rotaion du robot (machine à état)
 
-int EtatPresent = 1;
+int EtatPresent = 1;  // initialisation de la machine à état
 int EtatSuivant = 1;
 
-int av=0;
+
+int av=0;  // sorties de la la machine à état
 int arreter=0;
 int droite=0;
 int gauche=0;
 
-int distanceAvant = 999;
+
+int distanceAvant = 999;  // initialisation des variable lue par les capeurs à ultrason
 int distanceDroite = 999;
 int distanceGauche = 999;
 
-int man = 1;
-boolean man2 = true;
+// variable definisant le fonctionnement en mode manuel ou automatique
+boolean man2 = true;  // par defaut le robot est en mode de fonctionnement manuel
+
 
 void setup() {
-  Serial.begin(9600);
-  Serial1.begin(9600); 
-  avance.attach(pinAvance);
+  Serial.begin(9600);  // initialisation du port série pour la communication avec l'ordinateur (tests, débogage...)
+  Serial1.begin(9600);  //initialisation du port série 1 pour la communication Bluetooth
+  avance.attach(pinAvance);  // attribution des broches aux objets Servo
   maDirection.attach(pinMaDirection);
 
 }
 
+
 void loop() {
   
-  if(Serial1.available()){//reception des donnees en bluetooth
+  if(Serial1.available()){  // réception des données en sur le port série correspondant au Bluetooth
     control = Serial1.read();
-    //Serial.println(control);
+    // Serial.print("control = ");
+    // Serial.println(control);  // affichage des données sur le port serie USB
   }
-  Serial.print("control = ");
-  Serial.println(control);
-  
-  if(control == 109){// 109 = 'm'
+
+  // si le robot reçoit 'm' alors il passe en mode automatique, sinon le robot repasse en mode manuel
+  if(control == 109){// 109 = 'm' en ascii  
     man2 = false;
   }else{
     man2 = true;
   }
   
-  Serial.print("man = ");
-  Serial.println(man2);
+  // Serial.print("man = ");
+  // Serial.println(man2);  // affichage de la variable man2 sur le port série USB
+
+  // si man2 == true, alors on execute le code pour controller le robot en mode manuel
   if(man2){
-    //mode manuel
+    // mode manuel
     switch(control){
-    case 117 ://117
-      avancer();
-      break;
-    case 100 ://100
-      reculer();
-      break;
-    case 114 ://114
-      tournerSensAHManu();
-      control = 115;
-      break;
-    case 108 : //108
-      tournerSensHManu();
-      control = 115;
-      break;
-    case 115 : //115
-      arret();
-      break;
+      case 117 :// 117 = 'u' en ascii (Up)
+        avancer();
+        break;
+      case 100 :// 100 = 'd' en ascii (Down)
+        reculer();
+        break;
+      case 114 :// 114 = 'r' en ascii (Right)
+        tournerSensAHManu();
+        control = 115;
+        break;
+      case 108 : // 108 = 'l' en ascii (Left)
+        tournerSensHManu();
+        control = 115;
+        break;
+      case 115 : // 115 = 's' en ascii (Stop)
+        arret();
+        break;
     }
     delay(10);
-    
+
+  // si man2 == false, alors on execute la machine à état pour diriger le robot
   }else{
-    mesureDisAvant();
+    mesureDisAvant();  // appel des fonctions de mesure de distance
     mesureDisGauche(); 
     mesureDisDroite(); 
   
@@ -140,7 +148,7 @@ void loop() {
     /***Bloc M***/ 
     /************/
   
-    EtatPresent=EtatSuivant;
+    EtatPresent=EtatSuivant;  // mise à jour des états
   /*
     Serial.print("Etat Present : ");
     Serial.print(EtatPresent);
@@ -149,12 +157,13 @@ void loop() {
     /************/
     /***Bloc G***/ 
     /************/
-  
+    
     av=(EtatPresent==1);
     arreter=(EtatPresent==2)||(EtatPresent==6);
     droite=(EtatPresent==4);
     gauche=(EtatPresent==3);
   /*
+    // Affichage sur le port série USB
     Serial.print("avance : ");
     Serial.print(av);
     Serial.print(" , ");
@@ -183,6 +192,8 @@ void loop() {
     Serial.print(distanceGauche);
     Serial.println(" , ");
     */
+
+    // déplacement du robot en fonction des sorties de la machine à état
     if(av==1){
       avancer();
     }
@@ -206,59 +217,54 @@ void loop() {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void arret(){
+void arret(){  // arreter le robot
   avance.write(90);
   maDirection.write(90);
 }
 
-void avancer(){//int vitesse
- //avance.write(60);
+void avancer(){  // faire avancer le robot
  avance.write(80);
 }
 
-void reculer(){
+void reculer(){  // faire reculer le robot
   avance.write(120);
 }
 
-void tournerSensHAuto(){
+void tournerSensHAuto(){  // faire tourner le robot dans le sens horaire de 90° (mode Automatique)
   maDirection.write(84);
-  //delay(360);
   delay(150);
   finRota=1;
 }
 
-void tournerSensAHAuto(){
+void tournerSensAHAuto(){  // faire tourner le robot dans le sens anti-horaire de 90° (mode Automatique)
   maDirection.write(96);
-  //delay(360);
   delay(150);
   finRota=1;
-  //ajouter le gyro pour controler la rotation
 }
 
-void tournerSensHManu(){
+void tournerSensHManu(){  // faire tourner le robot dans le sens horaire de 90° (mode Manuel)
   maDirection.write(60);
   delay(360);
 }
 
-void tournerSensAHManu(){
+void tournerSensAHManu(){  // faire tourner le robot dans le sens anti-horaire de 90° (mode Manuel)
   maDirection.write(120);
   delay(360);
-  //ajouter le gyro pour controler la rotation
 }
 
-void mesureDisAvant(){
+void mesureDisAvant(){  // donne la distance mesuré par le capteur à l'avant 
   distanceAvant = ultrasonAvant.read();
   /*Serial.print(distanceAvant);
   Serial.print(" , ");*/
 }
 
-void mesureDisDroite(){
+void mesureDisDroite(){  // donne la distance mesuré par le capteur à droite
   distanceDroite = ultrasonDroite.read();
  /* Serial.print(distanceDroite);
    Serial.print(" , "); */
 }
 
-void mesureDisGauche(){
+void mesureDisGauche(){  // donne la distance mesuré par le capteur à gauche
   distanceGauche = ultrasonGauche.read();
  // Serial.println(distanceGauche);
 }
