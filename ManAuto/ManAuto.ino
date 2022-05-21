@@ -4,7 +4,6 @@
 //constantes
 #define pinAvance 8
 #define pinMaDirection 9
-const float pi = 3.1415;
 
 //objets
 Servo avance;
@@ -33,6 +32,7 @@ int distanceDroite = 999;
 int distanceGauche = 999;
 
 int man = 1;
+boolean man2 = true;
 
 void setup() {
   Serial.begin(9600);
@@ -46,18 +46,20 @@ void loop() {
   
   if(Serial1.available()){//reception des donnees en bluetooth
     control = Serial1.read();
-    Serial.print(control);
+    //Serial.println(control);
   }
-
-  if(control == 109){
-    if(man == 0){
-      man = 1;
-    }else{
-      man = 0;
-    }
+  Serial.print("control = ");
+  Serial.println(control);
+  
+  if(control == 109){// 109 = 'm'
+    man2 = false;
+  }else{
+    man2 = true;
   }
   
-  if(man == 1){
+  Serial.print("man = ");
+  Serial.println(man2);
+  if(man2){
     //mode manuel
     switch(control){
     case 117 ://117
@@ -67,11 +69,11 @@ void loop() {
       reculer();
       break;
     case 114 ://114
-      tournerSensAH();
+      tournerSensAHManu();
       control = 115;
       break;
     case 108 : //108
-      tournerSensH();
+      tournerSensHManu();
       control = 115;
       break;
     case 115 : //115
@@ -139,11 +141,11 @@ void loop() {
     /************/
   
     EtatPresent=EtatSuivant;
-  
+  /*
     Serial.print("Etat Present : ");
     Serial.print(EtatPresent);
     Serial.print(" , ");
-    
+    */
     /************/
     /***Bloc G***/ 
     /************/
@@ -152,7 +154,7 @@ void loop() {
     arreter=(EtatPresent==2)||(EtatPresent==6);
     droite=(EtatPresent==4);
     gauche=(EtatPresent==3);
-  
+  /*
     Serial.print("avance : ");
     Serial.print(av);
     Serial.print(" , ");
@@ -180,7 +182,7 @@ void loop() {
     Serial.print("distG : ");
     Serial.print(distanceGauche);
     Serial.println(" , ");
-    
+    */
     if(av==1){
       avancer();
     }
@@ -189,11 +191,11 @@ void loop() {
       delay(1000);
     }
     if(droite==1){
-      tournerSensAH();
+      tournerSensAHAuto();
       delay(1000);
     }
     if(gauche==1){
-      tournerSensH();
+      tournerSensHAuto();
       delay(1000);
     }
   }
@@ -218,18 +220,29 @@ void reculer(){
   avance.write(120);
 }
 
-void tournerSensH(){
+void tournerSensHAuto(){
   maDirection.write(84);
   //delay(360);
   delay(150);
   finRota=1;
 }
 
-void tournerSensAH(){
+void tournerSensAHAuto(){
   maDirection.write(96);
   //delay(360);
   delay(150);
   finRota=1;
+  //ajouter le gyro pour controler la rotation
+}
+
+void tournerSensHManu(){
+  maDirection.write(60);
+  delay(360);
+}
+
+void tournerSensAHManu(){
+  maDirection.write(120);
+  delay(360);
   //ajouter le gyro pour controler la rotation
 }
 
@@ -248,4 +261,4 @@ void mesureDisDroite(){
 void mesureDisGauche(){
   distanceGauche = ultrasonGauche.read();
  // Serial.println(distanceGauche);
-  }
+}
