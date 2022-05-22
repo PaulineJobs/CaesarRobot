@@ -1,4 +1,4 @@
-
+package test;
 
 
 public class CommunicationRobot {
@@ -39,16 +39,18 @@ public CommunicationRobot( ObstaclePosition obstaclePosition){
 
 
     void lancerCalcul(){
-        obstaclePosition.robotPosition.etatRobot=EtatRobot.MARCHE;
-        obstaclePosition.robotPosition.definirPosition();
+        obstaclePosition.robotPosition.etatRobot=EtatRobot.ARRET;
+        obstaclePosition.setPositionObstacle();
     }
 
     void lancerCommunication(){
-        setNombreTours();
-        getInfoLidar();
-        lancerCalcul();
-        if(obstaclePosition.robotPosition.tourneAdroite() || obstaclePosition.robotPosition.tourneAgauche()){
-            resetRoues();
+        if (obstaclePosition.robotPosition.etatRobot==EtatRobot.ARRET) {
+            setNombreTours();
+            getInfoLidar();
+            lancerCalcul();
+            if (obstaclePosition.robotPosition.tourneAdroite() || obstaclePosition.robotPosition.tourneAgauche()) {
+                resetRoues();
+            }
         }
     }
 

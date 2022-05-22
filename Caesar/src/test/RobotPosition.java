@@ -1,4 +1,4 @@
-import java.lang.Math.*;
+package test;
 
 public class RobotPosition {
     //attributs
@@ -9,7 +9,7 @@ public class RobotPosition {
     double diametreRoue = 0.12 ;
     double pi = Math.PI;
     AxeRobot axeRobot = AxeRobot.Y;
-    EtatRobot etatRobot ;
+    EtatRobot etatRobot = EtatRobot.ARRET ;
     SensAxe sensAxe = SensAxe.POSITIF;
 
 
@@ -181,6 +181,22 @@ public class RobotPosition {
 
         robotPosition.nbrToursDroite=-10;
         robotPosition.nbrToursGauche=-10;
+        robotPosition.definirPosition();
+        System.out.println("position du robot en x : " + robotPosition.positionX);
+        System.out.println("position du robot en  y : " + robotPosition.positionY);
+        System.out.println("axe actuel du robot : " + robotPosition.axeRobot);
+
+        robotPosition.nbrToursDroite=11;
+        robotPosition.nbrToursGauche=10;
+        robotPosition.definirPosition();
+        System.out.println("position du robot en x : " + robotPosition.positionX);
+        System.out.println("position du robot en  y : " + robotPosition.positionY);
+        System.out.println("axe actuel du robot : " + robotPosition.axeRobot);
+        System.out.println("à tourné à gauche  : " + robotPosition.tourneAgauche());
+        System.out.println("\n");
+
+        robotPosition.nbrToursDroite=10;
+        robotPosition.nbrToursGauche=10;
         robotPosition.definirPosition();
         System.out.println("position du robot en x : " + robotPosition.positionX);
         System.out.println("position du robot en  y : " + robotPosition.positionY);

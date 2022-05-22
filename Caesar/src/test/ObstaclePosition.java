@@ -1,3 +1,5 @@
+package test;
+
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -26,19 +28,35 @@ public class ObstaclePosition {
 
 
     void calculPositionLidarX(){
-        this.positionLidarX = (float)(distanceLidar * cos(angleLidar));
+        this.positionLidarX = (float)(distanceLidar * cos((angleLidar)));
     }
 
     void calculPositionLidarY(){
-        this.positionLidarY = (float)(distanceLidar * sin(angleLidar));
+        this.positionLidarY = (float)(distanceLidar * sin((angleLidar)));
     }
 
     void setPositionObstacle(){
         robotPosition.definirPosition();
         calculPositionLidarX();
         calculPositionLidarY();
-        positionObstacleX = robotPosition.positionX + positionLidarX;
-        positionObstacleY = robotPosition.positionY + positionLidarY;
+        if (robotPosition.axeRobot.equals(AxeRobot.Y) && robotPosition.sensAxe.equals(SensAxe.POSITIF) ) {
+            positionObstacleX = robotPosition.positionX + positionLidarX;
+            positionObstacleY = robotPosition.positionY + positionLidarY;
+        }
+        else if (robotPosition.axeRobot.equals(AxeRobot.Y) && robotPosition.sensAxe.equals(SensAxe.NEGATIF) ){
+            positionObstacleX = robotPosition.positionX - positionLidarY;
+            positionObstacleY = robotPosition.positionY - positionLidarX;
+        }
+
+        else if (robotPosition.axeRobot.equals(AxeRobot.X) && robotPosition.sensAxe.equals(SensAxe.POSITIF) ){
+            positionObstacleX = robotPosition.positionX + positionLidarY;
+            positionObstacleY = robotPosition.positionY - positionLidarX;
+        }
+
+        else if (robotPosition.axeRobot.equals(AxeRobot.X) && robotPosition.sensAxe.equals(SensAxe.NEGATIF) ){
+            positionObstacleX = robotPosition.positionX - positionLidarY;
+            positionObstacleY = robotPosition.positionY + positionLidarX;
+        }
     }
 
 
